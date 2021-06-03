@@ -1,4 +1,4 @@
-# vue-study-mine
+# vue-learn
 
 ## Project setup
 ```
