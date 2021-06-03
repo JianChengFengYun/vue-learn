@@ -7,6 +7,25 @@ class Store {
         this.options = options
         this._mutations = options.mutations
         this._actions = options.actions
+        this._wrappedGetters = options.getters
+
+        //getters
+        const computed = {}
+        this.getters = {}
+        // doubleCounter(state){}
+        const store = this
+        Object.keys(this._wrappedGetters).forEach(key=>{
+            // 获取用户定义的getters函数
+            const fn = store._wrappedGetters[key]
+            // 转换为computed可以使用的无参形式
+            computed[key] = function(){
+                return fn(store.state)
+            }
+            //为getters定义只读属性
+            Object.defineProperty(store.getters, key, {
+                get: ()=> store._vm[key]
+            })
+        })
 
         // 1.对state做响应式处理
 
@@ -26,8 +45,12 @@ class Store {
                     // 不做代理
                     $$state: options.state
                 }
-            }
+            },
+            // 没有参数
+            computed
         })
+
+        
 
         // 绑定this
         this.commit = this.commit.bind(this)

@@ -10,6 +10,7 @@
     <p @click="$store.dispatch('add')">
       async:{{$store.state.counter}}
     </p>
+    <p>{{$store.getters.doubleCounter}}</p>
     <router-view/>
   </div>
 </template>
