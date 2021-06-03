@@ -1,5 +1,6 @@
 // import Home from '../views/Home.vue'
 
+
 let Vue
 
 // vue插件形式
@@ -10,17 +11,49 @@ class KVueRouter{
         this.options = options
 
         // 将this.current声明为响应式
+        // Vue.util.defineReactive(
+        //     this,
+        //     'current',
+        //     window.location.hash.slice(1) || '/'
+        // )
+
+        this.current = window.location.hash.slice(1) || '/'
+
         Vue.util.defineReactive(
             this,
-            'current',
-            window.location.hash.slice(1) || '/'
+            'matched',
+            []
         )
+        // match方法可以递归便利路由表，获得匹配关系数组
+        this.match()
 
         // 2.监听hashchang事件，并在变化时候响应，获取hash部分
         window.addEventListener('hashchange',() => {
-            // console.log(this.current)
             this.current = window.location.hash.slice(1)
+            this.matched = []
+            this.match();
         })
+    }
+
+    match(routes) {
+        routes = routes || this.options.routes
+
+        //递归遍历
+        for(const route of routes){
+            if(route.path ==='/' && this.current ==='/'){ //首页
+                this.matched.push(route)
+                return
+            }
+            //'about/info'
+            if(route.path!=='/' && this.current.indexOf(route.path) != -1){
+                this.matched.push(route)
+                if(route.children){
+                    this.match(route.children)
+                }
+
+            }
+        }
+
     }
 
 }
@@ -66,6 +99,22 @@ KVueRouter.install = function (_Vue) {
     })
     Vue.component('router-view',{
         render(h){
+            //嵌套路由：标记当前router-view深度
+            this.$vnode.data.routerView = true;
+
+            let depth = 0
+            let parent=this.$parent
+            while(parent) {
+                const vnodeData = parent.$vnode && parent.$vnode.data
+                if(vnodeData){
+                    if(vnodeData.routerView){
+                        depth++
+                    }
+                }
+                parent=parent.$parent
+            }
+
+
             //h函数还可以接受一个组件，直接渲染
             // return h(Home)
 
@@ -74,13 +123,17 @@ KVueRouter.install = function (_Vue) {
             // 0.获取router实例
             // console.log(this.$router.options, this.$router.current)
             let component = null;
-            const  route = this.$router.options.routes.find(
-                (route) => route.path === this.$router.current
-            )
+            // const  route = this.$router.options.routes.find(
+            //     (route) => route.path === this.$router.current
+            // )
+            // if(route){
+            //     component = route.component
+            // }
+
+            const route = this.$router.matched[depth]
             if(route){
                 component = route.component
             }
-
 
             //1.获取hash部分，获取path
 
