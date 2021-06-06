@@ -12,6 +12,8 @@ function defineReactive(obj, key, val) {
     set(v){
       if(v!==val){
         console.log('set', v)
+        // 赋值是对象的时候，设置成响应式对象
+        observe(v)
         val = v
         // update()
       }
@@ -55,4 +57,8 @@ obj.tar.nar
 // obj.dong = 'dong'
 set(obj, 'dong', 'dong')
 obj.dong
+
+obj.tar = {
+  a:'1'
+}
 // 数组支持不了，拦截能够改变数组的7个方法，重写，让他们做数组操作的同时，变更通知
