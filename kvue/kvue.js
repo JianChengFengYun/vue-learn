@@ -1,6 +1,7 @@
 function defineReactive(obj, key, val) {
   // 递归
   observe(val)
+  // dep与key一一对应
   const dep = new Dep()
 
   // 属性拦截
@@ -95,15 +96,20 @@ class Compile {
       if(this.isElement(node)){
         // 元素:解析动态的指令、属性绑定、事件
         // console.log("编译元素", node.nodeName);
+
         const attrs = node.attributes;
         Array.from(attrs).forEach((attr) => {
           // 判断是否是一个动态属性
+
           // 1.指令k-xxx="counter"
           const attrName = attr.name;
           const exp = attr.value;
           if (this.isDir(attrName)) {
+            // 每个指令都有一个特殊处理函数 k-text k-html
+
             const dir = attrName.substring(2);
             // 看看是否是合法指令，如果是则执行处理函数
+
             this[dir] && this[dir](node, exp);
           }
         });
@@ -112,7 +118,9 @@ class Compile {
         if(node.childNodes.length>0){
           this.compile(node)
         }
+
       }else if(this.inInter(node)) {
+
         // 插值绑定表达式
         // console.log('编译插值',node.textContent)
         this.compileText(node)
@@ -127,6 +135,7 @@ class Compile {
     // 1.初始化
     const fn = this[dir + "Updater"];
     fn && fn(node, this.$vm[exp]);
+
     // 2.创建Watcher实例，负责后续更新
     new Watcher(this.$vm, exp, function(val) {
       fn && fn(node, val);
@@ -135,6 +144,8 @@ class Compile {
 
   // k-text
   text(node, exp) {
+    // node.textContent = this.$vm[exp]
+
     this.update(node, exp, "text");
   }
   textUpdater(node, val) {
@@ -143,6 +154,8 @@ class Compile {
 
   // k-html
   html(node, exp) {
+    // node.innerHTML = this.$vm[exp]
+
     this.update(node, exp, "html");
   }
   htmlUpdater(node, val) {
@@ -151,21 +164,23 @@ class Compile {
 
   // 解析{{ooxx}}
   compileText(node) {
-    this.update(node, RegExp.$1, "text");
     // 1.获取表达式的值
     // node.textContent = this.$vm[RegExp.$1]
+
+    this.update(node, RegExp.$1, "text");
   }
 
 
+  // 元素
   isElement(node){
     return node.nodeType ===1
   }
 
-  // {{}}
+  // {{}}文本
   inInter(node){
     return node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent)
   }
-
+  // 判断是否是一个k-开头的指令
   isDir(attrName) {
     return attrName.startsWith("k-");
   }
@@ -173,7 +188,7 @@ class Compile {
 
 // const warthers = []
 
-// 负责具体节点更新
+// 负责具体节点更新 将来这个key值发生变化，就拿这个值去执行更新函数
 class Watcher {
   constructor(vm, key, updater) {
     this.vm = vm;
@@ -183,7 +198,7 @@ class Watcher {
     // warthers.push(this)
     // 读当前值，触发依赖收集
     Dep.target = this
-    this.vm[this.key]
+    this.vm[this.key] // 触发响应式里的get，把关系建立起来
     Dep.target = null
   }
   

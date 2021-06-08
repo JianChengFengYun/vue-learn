@@ -48,11 +48,13 @@ function observe (obj){
   if(Array.isArray(obj)){
     // 替换7个变更方法
     obj.__proto__=arrayProto
+    
     // 对数组内部元素执行响应化
     const keys = Object.keys(obj)
     for(let i=0; i<obj.length; i++){
       observe(obj[i])
     }
+
   }else{
     Object.keys(obj).forEach(key=>defineReactive(obj, key, obj[key]))
   }
