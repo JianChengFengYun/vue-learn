@@ -3,27 +3,37 @@
     <!-- <ElementTest></ElementTest> -->
 
     <!-- KForm -->
-    <KInput v-model="model.username" placeholder="请输入用户名"></KInput>
+    <KForm :model="model" :rules="rules" ref='loginForm'>
+      <KFormItem label = '用户名：' prop='username'>
+        <KInput v-model="model.username" placeholder="请输入用户名"></KInput>
+      </KFormItem>
+      <KFormItem label = '密码：' prop='password'>
+        <KInput v-model="model.password" placeholder="密码"></KInput>
+      </KFormItem>
+      <KFormItem>
+        <button @click='onLogin'>login</button>
+      </KFormItem>
+    </KForm>
   </div>
 </template>
 
 <script>
 // import ElementTest from "@/components/form/ElementTest.vue";
 import KInput from "@/components/form/KInput.vue";
-// import KFormItem from "@/components/form/KFormItem.vue";
-// import KForm from "@/components/form/KForm.vue";
+import KFormItem from "@/components/form/KFormItem.vue";
+import KForm from "@/components/form/KForm.vue";
 
 export default {
   components: {
     // ElementTest,
     KInput,
-    // KFormItem,
-    // KForm,
+    KFormItem,
+    KForm,
   },
   data() {
     return {
       model: {
-        username: "",
+        username: "tom",
         password: "",
       },
       rules: {
@@ -33,6 +43,16 @@ export default {
     };
   },
   methods: {
+    onLogin(){
+      this.$refs.loginForm.validate(isValid=>{
+        console.log('isValid', isValid)
+        if(isValid){
+            console.log('submit login')
+        }else{
+            alert('校验失败')
+        }
+      })
+    }
   },
 };
 </script>

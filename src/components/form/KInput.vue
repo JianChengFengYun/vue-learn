@@ -18,6 +18,10 @@
     methods:{
       onInput(e){
         this.$emit('input', e.target.value)
+
+        //让父亲去派发校验
+        // this.dispatch('parent-name','validate')
+        this.$parent.$emit('validate')
       }
     }
   }
