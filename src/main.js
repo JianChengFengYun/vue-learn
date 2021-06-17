@@ -4,6 +4,7 @@ import router from './krouter'
 import store from './kstore'
 import Notice from "@/components/Notice.vue";
 import create from "@/utils/create";
+import '@/icon'
 
 Vue.config.productionTip = false
 

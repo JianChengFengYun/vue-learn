@@ -1,8 +1,15 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/">
+      <!-- <svg>
+        <use xlink:href = "#icon-zz" ></use>
+      </svg> -->
+      <svg-icon icon-class ='zz'></svg-icon>
+      Home</router-link> |
+      <router-link to="/about">
+      <svg-icon icon-class ='lz'></svg-icon>
+      About</router-link>
     </div>
     <p @click="$store.commit('add')">
       {{$store.state.counter}}
@@ -14,6 +21,16 @@
     <router-view/>
   </div>
 </template>
+
+<script>
+// import '@/icon/svg/zz.svg'
+  console.log('process.env.VUE_APP_DONG',process.env.VUE_APP_DONG);
+  // const basePath = process.env.VUE_APP_DONG;
+
+export default {
+  
+}
+</script>
 
 <style>
 #app {
